@@ -1,0 +1,194 @@
+#!/usr/bin/python3
+
+
+
+import sys
+
+
+
+def read_source_code_from_stdin():
+    source_code = sys.stdin.readlines()
+    source_code = [line.rstrip('\n') for line in source_code]
+    return source_code
+
+def read_source_code_from_file(filename):
+    with open(filename) as file:
+        source_code = file.readlines()
+    source_code = [line.rstrip('\n') for line in source_code]
+    return source_code
+
+def assemble(source_code):
+    symbol_table = assemble_first_pass(source_code)
+    object_code = assemble_second_pass(source_code, symbol_table)
+    return object_code
+
+def assemble_first_pass(source_code)
+    symbol_table = {
+        'SP'        : 0,
+        'LCL'       : 1,
+        'ARG'       : 2,
+        'THIS'      : 3,
+        'THAT'      : 4,
+        'R0'        : 0,
+        'R1'        : 1,
+        'R2'        : 2,
+        'R3'        : 3,
+        'R4'        : 4,
+        'R5'        : 5,
+        'R6'        : 6,
+        'R7'        : 7,
+        'R8'        : 8,
+        'R9'        : 9,
+        'R10'       : 10,
+        'R11'       : 11,
+        'R12'       : 12,
+        'R13'       : 13,
+        'R14'       : 14,
+        'R15'       : 15,
+        'SCREEN'    : 16384,
+        'KBD'       : 24576
+    }
+    instruction_address = 0
+    for line_number in range(len(source_code)):
+        line = source_code[line]
+        if source_line_is_blank(line):
+            pass
+        elif source_line_is_comment(line):
+            pass
+        elif source_line_is_label_definition(line):
+            label = source_line_get_label(line)
+            if label not in symbol_table:
+                symbol_table[label] = instruction_address
+            else
+                raise AssemblerError('Duplicate label "' + source_line_get_address(line) + '" on line ' + (line_number + 1) + '.') 
+        elif source_line_is_instruction(line):
+            instruction_address = instruction_address + 1
+        else
+            raise AssemblerError('Syntax error on line ' + (line_number + 1) + '.')
+    return symbol_table
+
+def assemble_second_pass(source_code, symbol_table)
+    object_code_size = 0
+    for line_number in range(len(source_code)):
+        line = source_code[line]
+        if source_line_is_instruction(line):
+            if source_line_is_literal_a_instruction:
+                value = source_line_get_literal(line)
+                write_a_instruction(value)
+            elif source_line_is_symbolic_a_instruction:
+                symbol = source_line_get_symbol(line)
+                if symbol in symbol_table:
+                    value = symbol_table[symbol]
+                    write_a_instruction(value)
+                else
+                    raise AssemblerError('Undefined symbol "' + symbol + '" on line ' + (line_number + 1) + '.')
+            elif source_line_is_i_instruction:
+                destination = source_line_get_destination(line)
+                computation = source_line_get_computation(line)
+                jump_condition = source_line_get_jump_condition(line)
+                write_i_instruction(destination, computation, jump_condition)
+            else
+                raise InternalAssemblerInstruction('Unexpected input found in source code line ' + (line_number + 1) + '.')
+        elif source_line_is_blank(line):
+            pass
+        elif source_line_is_comment(line):
+            pass
+        elif source_line_is_label_definition(line):
+            pass
+        else
+            throw new InternalAssemblerError('Unexpected input found in source code line ' + (line_number + 1) + '.')
+    return object_code
+
+def source_line_is_blank(line):
+    pass
+
+def source_line_is_comment(line):
+    pass
+
+def source_line_is_label_definition(line):
+    pass
+
+def source_line_is_instruction(line):
+    pass
+
+def source_line_is_literal_a_instruction(line):
+    pass
+
+def source_line_is_symbolic_a_instruction(line):
+    pass
+
+def source_line_is_i_instruction(line):
+    pass
+
+def source_line_get_literal(line):
+    pass
+
+def source_line_get_symbol(line):
+    pass
+
+def source_line_get_destination(line):
+    pass
+
+def source_line_get_computation(line):
+    pass
+
+def source_line_get_jump_condition(line):
+    pass
+
+def write_object_code_to_stdout():
+    for line in object_code:
+        print(line)
+
+def write_object_code_to_file(filename):
+    file = open(filename, 'w')
+    for line in object_code:
+        file.write(line + '\n')
+
+class InternalAssemblerError(Exception):
+    def __init__(self, message):
+        self.message = message;
+
+
+
+try:
+
+
+
+    # Read in source code
+
+    if len(sys.argv) == 1:
+        source_code = read_source_code_from_stdin()
+    elif (len(sys.argv) == 2) or (len(sys.argv) == 3):
+        source_code = read_source_code_from_file(sys.argv[1])
+        source_code = read_source_code_from_file(sys.argv[1])
+    else:
+        sys.stderr.write('Usage: hasm [source file] [object file]\n')
+        sys.exit(1)
+
+
+
+    # Assemble
+
+    object_code = assemble(source_code)
+
+
+
+    # Write out object code
+
+    if (len(sys.argv) == 1) or (len(sys.argv) == 2):
+        write_object_code_to_stdout()
+    elif len(sys.argv) == 3:
+        write_object_code_to_file(sys.argv[2])
+    else:
+        raise InternalAssemblerError('Unexpected number of arguments (' + sys.argv + ') writing object code.')
+
+
+
+except AssemblerError as exception:
+    sys.stderr.write(exception.message + '\n')
+    sys.exit(1)
+
+except InternalAssemblerError as exception:
+    sys.stderr.write('There was a problem with the assembler.  This is probably the result of a bug in the assembler itself.\n')
+    sys.stderr.write(exception.message + '\n')
+    sys.exit(1)
